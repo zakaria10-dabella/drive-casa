@@ -1,25 +1,41 @@
+@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource-variable/geist/index.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  body { @apply bg-porcelain font-sans text-night-900 antialiased; }
-  ::selection { @apply bg-casa-500 text-white; }
-  :focus-visible { @apply outline-none ring-2 ring-casa-500 ring-offset-2; }
+  html { scrollbar-color: #3A3A42 #0C0C0E; -webkit-text-size-adjust: 100%; }
+  body { @apply bg-coal-950 font-sans text-[15px] leading-relaxed text-bone antialiased; caret-color: #FF5A4E; overflow-x: hidden; }
+  ::selection { background: #E0362E; color: #fff; }
+  :focus-visible { outline: 2px solid #FF5A4E; outline-offset: 3px; border-radius: 4px; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  a { text-underline-offset: 4px; text-decoration-thickness: 1px; }
 }
 
 @layer components {
-  .wrap { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition-colors; }
-  .btn-red { @apply btn bg-casa-500 text-white hover:bg-casa-600; }
-  .btn-dark { @apply btn bg-night-900 text-white hover:bg-night-700; }
-  .btn-light { @apply btn border border-night-900/10 bg-white hover:border-night-900/30; }
-  .field { @apply w-full rounded-xl border border-night-900/10 bg-white px-3.5 py-3 text-sm font-medium placeholder:text-slate-450 focus:border-casa-500 focus:outline-none focus:ring-4 focus:ring-casa-500/15; }
-  .lbl { @apply mb-1.5 block text-[11px] font-bold uppercase tracking-[0.14em] text-slate-450; }
+  .wrap { @apply mx-auto w-full max-w-[1320px] px-4 sm:px-6 lg:px-10; }
+  .display { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-stretch: 125%; font-weight: 760; letter-spacing: -0.035em; line-height: 0.94; text-transform: uppercase; }
+  .display-sm { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-stretch: 118%; font-weight: 680; letter-spacing: -0.02em; line-height: 1.05; }
+  .label { @apply text-[11px] font-medium uppercase tracking-[0.18em]; }
+  .btn { @apply inline-flex min-h-[44px] select-none items-center justify-center gap-2 whitespace-nowrap rounded-card px-5 text-sm font-semibold transition-[background-color,color,border-color,transform] duration-150 ease-out active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40; }
+  .btn-red { @apply btn bg-signal-500 text-white hover:bg-signal-600; }
+  .btn-ghost { @apply btn border border-bone/20 text-bone hover:border-bone/60; }
+  .btn-bone { @apply btn bg-bone text-coal-950 hover:bg-white; }
+  .field { @apply min-h-[48px] w-full rounded-card border border-bone/15 bg-coal-900 px-3.5 text-sm text-bone placeholder:text-bone-mute transition-colors hover:border-bone/30 focus:border-signal-400 focus:outline-none; color-scheme: dark; }
+  .lbl { @apply label mb-2 block text-bone-mute; }
   .tnum { font-variant-numeric: tabular-nums; }
+  .grain::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 }
 
 input[type='range'] { -webkit-appearance: none; appearance: none; background: transparent; }
-input[type='range']::-webkit-slider-runnable-track { height: 6px; border-radius: 99px; background: transparent; }
-input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; height: 22px; width: 22px; margin-top: -8px; border-radius: 99px; background: #fff; border: 5px solid #D7263D; box-shadow: 0 4px 12px rgba(215, 38, 61, .4); cursor: grab; }
-input[type='range']::-moz-range-thumb { height: 14px; width: 14px; border-radius: 99px; background: #fff; border: 5px solid #D7263D; cursor: grab; }
+input[type='range']::-webkit-slider-runnable-track { height: 2px; background: transparent; }
+input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; margin-top: -9px; border-radius: 99px; background: #F1ECE4; border: 5px solid #E0362E; cursor: grab; }
+input[type='range']::-moz-range-thumb { height: 12px; width: 12px; border-radius: 99px; background: #F1ECE4; border: 5px solid #E0362E; cursor: grab; }
+input[type='date']::-webkit-calendar-picker-indicator { filter: invert(.85); cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 1ms !important; }
+}

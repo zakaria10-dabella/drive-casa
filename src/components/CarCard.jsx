@@ -1,54 +1,50 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Briefcase, Fuel, Settings2, Star, Users } from 'lucide-react'
-import CarArt from './CarArt'
+import { ArrowUpRight } from 'lucide-react'
 import { mad } from '../data/fleet'
 
-export function Specs({ car, className = '' }) {
-  return (
-    <ul className={`flex flex-wrap gap-x-4 gap-y-1 text-xs font-medium text-slate-450 ${className}`}>
-      <li className="flex items-center gap-1"><Users size={13} /> {car.seats}</li>
-      <li className="flex items-center gap-1"><Briefcase size={13} /> {car.bags}</li>
-      <li className="flex items-center gap-1"><Settings2 size={13} /> {car.transmission}</li>
-      <li className="flex items-center gap-1"><Fuel size={13} /> {car.fuel}</li>
-    </ul>
-  )
+export function specLine(car) {
+  return [`${car.seats} seats`, car.transmission, car.fuel, `${car.bags} bags`]
 }
 
-export default function CarCard({ car, days }) {
+export default function CarCard({ car, days, index = 0 }) {
   return (
     <motion.li
       layout
-      initial={{ opacity: 0, y: 24, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.2 } }}
-      transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-      whileHover="hover"
-      className="group flex flex-col rounded-[1.75rem] bg-white p-5 shadow-soft"
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.18 } }}
+      transition={{ duration: 0.5, delay: Math.min(index, 6) * 0.05, ease: [0.23, 1, 0.32, 1] }}
+      className="group relative flex flex-col"
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-casa-500">{car.type}</p>
-          <h3 className="mt-1 font-display text-xl font-bold">{car.name}</h3>
-        </div>
-        <span className="flex items-center gap-1 rounded-full bg-porcelain px-2 py-1 text-xs font-bold"><Star size={12} className="fill-amber-400 text-amber-400" /> {car.rating}</span>
+      <div className="relative aspect-[16/10] overflow-hidden rounded-card bg-coal-850">
+        <motion.img
+          layoutId={`photo-${car.id}`}
+          src={car.photo}
+          alt={`${car.name}, ${car.year}`}
+          width="1280"
+          height="800"
+          loading="lazy"
+          decoding="async"
+          style={{ objectPosition: car.pos }}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out [@media(hover:hover)]:group-hover:scale-[1.04]"
+        />
       </div>
-      <div className="relative my-3 overflow-hidden rounded-2xl bg-gradient-to-b from-porcelain to-mist px-4 py-6">
-        <motion.div variants={{ hover: { x: 10 } }} transition={{ type: 'spring', stiffness: 200, damping: 18 }}>
-          <CarArt body={car.body} color={car.color} className="w-full" />
-        </motion.div>
-        <motion.span variants={{ hover: { x: 0, opacity: 1 } }} initial={{ x: -20, opacity: 0 }} className="absolute bottom-3 left-4 h-0.5 w-16 rounded-full bg-casa-500" />
+      <div className="mt-4 flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="label text-bone-mute">{car.type}</p>
+          <h3 className="display-sm mt-1.5 text-xl">
+            <Link to={`/cars/${car.id}`} className="outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-signal-400">
+              {car.name}
+            </Link>
+          </h3>
+        </div>
+        <ArrowUpRight size={20} aria-hidden="true" className="mt-5 shrink-0 text-bone-mute transition-[color,transform] duration-200 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-signal-400" />
       </div>
-      <Specs car={car} />
-      <div className="mt-5 flex items-end justify-between gap-3 border-t border-night-900/5 pt-4">
-        <div>
-          <p className="tnum font-display text-2xl font-bold">{mad(car.price)}<span className="font-sans text-xs font-semibold text-slate-450"> /day</span></p>
-          <p className="tnum text-xs text-slate-450">{mad(car.price * days)} for {days} day{days > 1 ? 's' : ''}</p>
-        </div>
-        <div className="flex gap-2">
-          <Link to={`/cars/${car.id}`} className="btn-light px-3.5 py-2.5">Details</Link>
-          <Link to={`/book/${car.id}`} className="btn-dark px-3.5 py-2.5">Book</Link>
-        </div>
+      <p className="mt-2 text-sm text-bone-dim">{specLine(car).join('  ·  ')}</p>
+      <div className="mt-4 flex items-baseline justify-between border-t border-bone/10 pt-3">
+        <p className="tnum"><span className="text-lg font-semibold">{mad(car.price)}</span><span className="text-sm text-bone-mute"> / day</span></p>
+        <p className="tnum text-sm text-bone-dim">{mad(car.price * days)} for {days} day{days > 1 ? 's' : ''}</p>
       </div>
     </motion.li>
   )

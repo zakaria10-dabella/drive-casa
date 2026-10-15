@@ -4,19 +4,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        night: { 700: '#1E2840', 800: '#141C30', 900: '#0B1120' },
-        casa: { 400: '#F0566A', 500: '#D7263D', 600: '#B81D32' },
-        porcelain: '#F5F6F8',
-        mist: '#E7EAF0',
-        slate: { 450: '#7A8399' },
+        coal: { 950: '#0C0C0E', 900: '#131316', 850: '#18181C', 800: '#1E1E23', 700: '#2B2B31', 600: '#3A3A42' },
+        bone: { DEFAULT: '#F1ECE4', dim: '#BDB7AD', mute: '#948E85', paper: '#EEE8DE', line: '#D9D2C6' },
+        signal: { 300: '#FF7A6E', 400: '#FF5A4E', 500: '#E0362E', 600: '#C42820', 700: '#A3201A' },
       },
       fontFamily: {
-        display: ['Syne', 'system-ui', 'sans-serif'],
-        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        display: ['"Archivo Variable"', 'Archivo', 'system-ui', 'sans-serif'],
+        sans: ['"Geist Variable"', 'Geist', 'system-ui', 'sans-serif'],
       },
-      boxShadow: {
-        soft: '0 1px 2px rgba(11,17,32,.05), 0 14px 40px -18px rgba(11,17,32,.35)',
-      },
+      borderRadius: { card: '6px' },
+      transitionTimingFunction: { out: 'cubic-bezier(0.23, 1, 0.32, 1)' },
     },
   },
   plugins: [],

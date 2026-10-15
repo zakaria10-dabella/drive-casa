@@ -1,42 +1,62 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { motion, useMotionValueEvent, useScroll } from 'framer-motion'
-import { Phone } from 'lucide-react'
-import Magnetic from './Magnetic'
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion'
+import { Menu, X } from 'lucide-react'
 
-export function Logo({ light }) {
+export function Logo() {
   return (
-    <span className={`flex items-center gap-2 font-display text-xl font-extrabold tracking-tight ${light ? 'text-white' : 'text-night-900'}`}>
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-casa-500">
-        <svg viewBox="0 0 32 32" className="h-6 w-6" aria-hidden="true"><path d="M6 19l3-6c.5-1 1.4-1.6 2.5-1.6h9c1.1 0 2 .6 2.5 1.6l3 6v4H6z" fill="#fff" /><circle cx="11" cy="23" r="2.4" fill="#D7263D" stroke="#fff" strokeWidth="1.5" /><circle cx="21" cy="23" r="2.4" fill="#D7263D" stroke="#fff" strokeWidth="1.5" /></svg>
-      </span>
-      Drive<span className="text-casa-500">Casa</span>
+    <span className="flex items-center gap-2.5">
+      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true">
+        <path d="M8 8h8.5a8 8 0 0 1 0 16H8z" fill="none" stroke="currentColor" strokeWidth="3" />
+        <rect x="8" y="14.5" width="10" height="3" fill="#E0362E" />
+      </svg>
+      <span className="display-sm text-[15px] uppercase tracking-[0.04em]">DriveCasa</span>
     </span>
   )
 }
+
+const links = [
+  ['Fleet', '/#fleet'],
+  ['Locations', '/#locations'],
+  ['Pricing', '/#pricing'],
+  ['FAQ', '/#faq'],
+]
 
 export default function Navbar() {
   const { pathname } = useLocation()
   const { scrollY } = useScroll()
   const [solid, setSolid] = useState(false)
-  useMotionValueEvent(scrollY, 'change', (y) => setSolid(y > 40))
-  const onDark = pathname === '/' && !solid
+  const [open, setOpen] = useState(false)
+  useMotionValueEvent(scrollY, 'change', (y) => setSolid(y > 60))
+  useEffect(() => setOpen(false), [pathname])
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${solid || pathname !== '/' ? 'bg-white/85 shadow-[0_1px_0_rgba(11,17,32,.06)] backdrop-blur-xl' : ''}`}>
-      <div className="wrap flex h-16 items-center justify-between">
-        <Link to="/" aria-label="DriveCasa home"><Logo light={onDark} /></Link>
-        <nav className={`hidden items-center gap-8 text-sm font-semibold md:flex ${onDark ? 'text-white/80' : 'text-night-900/70'}`}>
-          <Link to="/#fleet" className="hover:text-casa-500">Fleet</Link>
-          <a href="/#how" className="hover:text-casa-500">How it works</a>
-          <span className="flex items-center gap-1.5"><Phone size={14} /> 05 22 00 00 00</span>
+    <header className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${solid || open ? 'border-b border-bone/10 bg-coal-950/95 backdrop-blur-md' : 'border-b border-transparent'}`}>
+      <div className="wrap flex h-16 items-center justify-between gap-6">
+        <Link to="/" aria-label="DriveCasa home" className="flex min-h-[44px] items-center text-bone"><Logo /></Link>
+        <nav aria-label="Main" className="hidden items-center gap-8 text-sm text-bone/80 md:flex">
+          {links.map(([l, h]) => (
+            <Link key={l} to={h} className="flex min-h-[44px] items-center transition-colors duration-150 hover:text-bone">{l}</Link>
+          ))}
         </nav>
-        <Magnetic>
-          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-            <Link to="/#fleet" className="btn-red px-4 py-2.5">Book a car</Link>
-          </motion.div>
-        </Magnetic>
+        <div className="flex items-center gap-2">
+          <a href="tel:+212522000000" className="hidden min-h-[44px] items-center text-sm text-bone/80 tnum hover:text-bone lg:flex">+212 522 00 00 00</a>
+          <Link to="/#fleet" className="btn-red ml-4 hidden sm:inline-flex">Book a car</Link>
+          <button onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'} className="grid h-11 w-11 place-items-center rounded-card text-bone md:hidden">
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
+      <AnimatePresence>
+        {open && (
+          <motion.nav initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }} aria-label="Mobile" className="wrap flex flex-col pb-6 md:hidden">
+            {links.map(([l, h]) => (
+              <Link key={l} to={h} onClick={() => setOpen(false)} className="display-sm flex min-h-[52px] items-center border-b border-bone/10 text-2xl uppercase">{l}</Link>
+            ))}
+            <Link to="/#fleet" onClick={() => setOpen(false)} className="btn-red mt-6">Book a car</Link>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </header>
   )
 }

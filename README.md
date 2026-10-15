@@ -1,21 +1,39 @@
-# Drive Casa — Car Rental
+# DriveCasa: Car Rental in Casablanca
 
-> A premium car-rental experience for Casablanca: spin a real-time 3D car on a turntable, filter the fleet with animated controls, and book in four smooth steps with transparent prices in MAD.
+> A car rental site for Casablanca, designed like a real product: full-bleed city photography, a dark editorial layout with one action red, and a booking flow that shows the full price up front in dirhams.
 
-![Drive Casa desktop screenshot](docs/screenshot.png)
+![DriveCasa desktop screenshot](docs/screenshot.png)
 
-<p align="center"><img src="docs/mobile.png" alt="Drive Casa on mobile" width="300" /></p>
+<p align="center"><img src="docs/mobile.png" alt="DriveCasa on mobile" width="300" /></p>
 
-## Features
+## What's in it
 
-- **3D turntable hero**: a car body extruded from hand-drawn side profiles (hatch, sedan, SUV) with clearcoat paint, glass, emissive lights and spinning wheels, built entirely from procedural geometry in React Three Fiber. Switch body styles and paint colours live, drag to spin, and watch it rotate as you scroll. It is lazy-loaded, capped at DPR 2, and falls back gracefully without WebGL.
-- **Glass search widget**: pick-up and return locations (airport, train stations, Maarif, Aïn Diab), with date validation and a live day counter.
-- **Fleet explorer** with nine realistic cars: animated type tabs (`layoutId`), a transmission segmented control, a price-range slider, sorting, a layout-animated grid and an empty state.
-- **Car detail page** with specs, features, rating and a price card with the live quote.
-- **Four-step booking flow** (Trip, Extras, Driver, Review): direction-aware slide transitions, extras toggles, driver validation (age, licence, Moroccan phone), and a live summary with a 10% weekly discount, one-way fee and deposit.
-- **Confirmation screen** with an animated check and a booking code.
-- Clip-path page transitions between routes, magnetic buttons, staggered headline and parallax hero.
-- Responsive down to 375px. Respects `prefers-reduced-motion`.
+- **Hero**: a full-bleed photo of the Hassan II Mosque at sunset that scales up as you scroll, a two-line headline over a corner scrim, and the trip search form overlapping the bottom edge of the photo.
+- **Fleet**: nine cars, each with a real photo cropped to the same 16:10 frame (focal point set per car). Filter by type with an animated `layoutId` tab, by gearbox and maximum daily price, and sort the list. The grid re-flows with layout animations, and an empty state appears when nothing matches.
+- **Car detail**: the card photo grows into the detail hero through a shared `layoutId` transition. The page has a large name and price, a short description of the car, a specs grid, the on-board features, a sticky quote with the booking button, and similar cars.
+- **Pick-up locations**: a parallax band over a Corniche sunset photo, listing the airport, both train stations, the Maarif office and Aïn Diab, with opening hours.
+- **Drive the city**: a pinned horizontal gallery of Casablanca drives (Boulevard Mohammed V, Hassan II Mosque, the Aïn Diab Corniche, Sidi Abderrahmane), each with the drive time from a pick-up desk. On small screens and with reduced motion it becomes a native scroll-snap row.
+- **Pricing table**: a light section with every car's price per day, for 3 days and for 7 days (10% off). It also lists every extra, the one-way fee and the deposit, all read from the same data the checkout uses.
+- **FAQ**: an accordion next to a sticky heading.
+- **Four-step booking** (Trip, Extras, Driver, Review). Steps slide in the direction you are going. It validates the driver (age, licence years, Moroccan phone number) and keeps a live summary with the weekly discount, one-way fee and deposit. A confirmation screen ends the flow.
+
+## Design system
+
+| Role | Value |
+| --- | --- |
+| Canvas / surface | Coal `#0C0C0E` / `#131316` |
+| Ink / secondary | Bone `#F1ECE4` / `#BDB7AD` |
+| Accent (one) | Signal red `#E0362E` for buttons, `#FF5A4E` for text on dark |
+| Light section | Paper `#EEE8DE` with ink `#0C0C0E` |
+| Display type | [Archivo](https://fonts.google.com/specimen/Archivo) variable, width 125, uppercase, tight tracking |
+| Text type | [Geist](https://vercel.com/font) variable, tabular numerals for prices |
+| Radius | 6px everywhere |
+
+Both fonts are self-hosted through `@fontsource-variable`, so no external font requests are made.
+
+**Motion**: scroll-linked scale and parallax with `useScroll` and `useTransform`, staggered reveals on headings and lists, `layoutId` for filter tabs and for the card-to-detail photo, and `AnimatePresence` for the fleet grid, the FAQ and the booking steps. All of it uses an ease-out curve with no springy overshoot. `prefers-reduced-motion` turns off the scroll transforms and the pinned gallery, and `MotionConfig reducedMotion="user"` handles the rest.
+
+**Accessibility**: contrast is at least 4.5:1 for body text, every control is at least 44px, focus rings are visible in the accent colour, there is a skip link, and the FAQ accordion and the filter radio groups use ARIA.
 
 ## Tech stack
 
@@ -24,8 +42,6 @@
 ![React Router](https://img.shields.io/badge/React_Router-6-CA4245?logo=reactrouter&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-0055FF?logo=framer&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
-![Three.js](https://img.shields.io/badge/Three.js-r170-000000?logo=threedotjs&logoColor=white)
-![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-8-000000?logo=react&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ## Getting started
@@ -42,42 +58,40 @@ npm run preview  # serve the production build
 ## Project structure
 
 ```
+public/photos/            # car and city photography + credits.json
 src/
 ├── components/
-│   ├── Navbar.jsx        # logo, links, CTA
+│   ├── Navbar.jsx        # wordmark, links, mobile menu, CTA
 │   ├── SearchWidget.jsx  # locations + dates with validation
-│   ├── CarCard.jsx       # fleet card + shared specs row
-│   ├── CarArt.jsx        # SVG car illustration from shared profiles
-│   ├── Magnetic.jsx      # magnetic hover wrapper
-│   └── Footer.jsx
+│   ├── CarCard.jsx       # 16:10 photo card with shared layoutId
+│   └── Footer.jsx        # contact + photo credits
 ├── context/TripContext.jsx  # trip state + quote() pricing logic
-├── data/
-│   ├── fleet.js          # cars, locations, extras, MAD formatter
-│   └── profiles.js       # hatch / sedan / suv side profiles
+├── data/fleet.js         # cars (photo focal points, copy), locations, extras
 ├── pages/
-│   ├── Home.jsx          # hero, 3D turntable, how it works, fleet
+│   ├── Home.jsx          # hero, fleet, locations, gallery, pricing, FAQ
 │   ├── CarDetail.jsx
 │   └── Booking.jsx       # 4-step flow + confirmation
-├── three/
-│   ├── Car3D.jsx         # extruded car, turntable, lighting, camera rig
-│   └── webgl.js
-├── App.jsx               # routes + page transitions
+├── App.jsx
 └── main.jsx
 ```
 
-## Design notes
+## Photo credits
 
-**Palette**: deep night blue (`#0B1120`) gives the hero a showroom feel at night, and Casablanca red (`#D7263D`) is used for the brand, CTAs and the turntable ring. Inner pages switch to a light porcelain surface (`#F5F6F8`) so prices and forms stay easy to read.
+All photographs come from Wikimedia Commons and are used under the licences listed. They have been resized and cropped. The full list with source links is in [`public/photos/credits.json`](public/photos/credits.json), and the site footer shows it too.
 
-**Typography**: [Syne](https://fonts.google.com/specimen/Syne) at extra-bold gives the wide, automotive-poster headline. [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) keeps forms, specs and prices clean at small sizes.
-
-**One source of truth for shapes**: the same side-profile paths draw the SVG illustrations on the cards and are extruded into the 3D bodies, so the 2D and 3D cars always match.
-
-**Motion**:
-- The hero car turns slowly on its own and keeps turning as you scroll, while the hero text drifts with parallax.
-- Booking steps slide in the direction of travel (forward or back), and the progress bar fills with a spring.
-- Route changes use a clip-path wipe, and quote lines such as the weekly discount animate in and out of the summary.
-- On confirmation, the check pops in and the booked car drives into frame.
+| Photo | Author | Licence |
+| --- | --- | --- |
+| Hassan II Mosque at sunset | Milamber's portfolio | CC BY 2.0 |
+| Sidi Abderrahmane, Aïn Diab | Achalhikarim | CC BY-SA 4.0 |
+| Boulevard Mohammed V | Reda benkhadra | CC0 |
+| Corniche Aïn Diab promenade | Bertrand Soubeyrand | CC BY-SA 4.0 |
+| Dacia Logan | ROCostiTheBunnyCZ | CC BY-SA 4.0 |
+| Fiat 500 | Calreyn88 | CC BY-SA 4.0 |
+| Renault Clio V, Dacia Duster, Hyundai Tucson | Alexander Migl | CC BY-SA 4.0 |
+| Peugeot 208 | M 93 | CC BY-SA 3.0 de |
+| Toyota Corolla | TTTNIS | CC0 |
+| Mercedes-AMG C 43 | Alexander-93 | CC BY-SA 4.0 |
+| Range Rover Evoque | Vauxford | CC BY-SA 4.0 |
 
 ## Author
 
@@ -88,4 +102,4 @@ src/
 
 ## License
 
-[MIT](LICENSE) © 2026 Zakaria Dabella
+Code: [MIT](LICENSE) © 2026 Zakaria Dabella. Photographs: see the credits above.
